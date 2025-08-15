@@ -1,66 +1,62 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="color-scheme" content="light dark" />
-    <title>嵌入式开发笔记</title>
-    <meta name="description" content="一个专注于嵌入式开发的笔记博客：MCU、RTOS、驱动、调试、通信与工具链。支持搜索与标签过滤，默认浅绿色护眼背景。" />
-    <link rel="stylesheet" href="styles.css" />
-  </head>
-  <body>
-    <header class="site-header">
-      <div class="container header-inner">
-        <div class="brand">
-          <div class="logo" aria-hidden="true">{}</div>
-          <div>
-            <h1 class="title">嵌入式开发笔记</h1>
-            <p class="subtitle">MCU · RTOS · 驱动 · 调试 · 通信</p>
-          </div>
-        </div>
-        <div class="header-actions">
-          <button id="themeToggle" class="btn" aria-pressed="false" title="切换主题">🌗 深色模式</button>
-          <a class="btn ghost" href="#" id="backToTop" title="返回顶部">↑ 顶部</a>
-        </div>
-      </div>
-    </header>
+---
+layout: default
+nav-class: home
+description: A White label website
+keywords: jekyll, reg tait
+nav-class: home
+---
 
-    <main class="container">
-      <div class="layout">
-        <aside class="sidebar" aria-label="分类">
-          <div class="sidebar-inner">
-            <h2 class="sidebar-title">分类</h2>
-            <nav id="categoryList" class="category-list" role="list"></nav>
-          </div>
-        </aside>
+<div class="wrapper">
+<h1>{{ site.title }}</h1>
+<p>{{ site.description }}</p>
+</div>
 
-        <section class="main">
-          <section class="controls" aria-label="搜索">
-            <div class="search">
-              <input id="searchInput" type="search" placeholder="搜索标题、摘要或正文（按 / 快速聚焦）" aria-label="搜索" />
-            </div>
-            <div class="status-bar">
-              <span id="resultCount">加载中…</span>
-              <button id="clearFilters" class="btn ghost small" title="清除搜索与分类">清除</button>
-            </div>
-          </section>
+<section class="cf">
+<div class="wrapper">
 
-          <section id="postList" class="post-list" aria-live="polite" aria-busy="true"></section>
+<div class="home-news-listing">
+<h2>News</h2>
+{% for post in site.posts limit:3 %}
+<h3><a class="post-link" href="{{ post.url | prepend: site.baseurl }}" title="{{ post.title }}">{{ post.title }}</a></h3>
+<p><span class="inline-post-date">{{ post.date | date: "%b %-d, %Y" }}—</span>{{ post.excerpt }}</p>
+{% endfor %}
+</div>
 
-          <article id="postContent" class="post-content" hidden></article>
-        </section>
-      </div>
-    </main>
+<a class="read-more" href="/news/" title="News">More news →</a>
 
-    <footer class="site-footer">
-      <div class="container">
-        <p>© <span id="year"></span> 嵌入式开发笔记 · 记录问题与解法</p>
-        <p class="muted">静态页面，可直接本地打开浏览。</p>
-      </div>
-    </footer>
-
-    <script src="app.js"></script>
-  </body>
-  </html>
+</div>
+</section>
 
 
+<section class="home-case-listing cf">
+<div class="wrapper">
+
+<h2>Latest case study</h2>
+
+{% assign items = site.case | sort: 'date' %}
+{% for case in site.case limit:1 %}
+<h3 class="cf"><a title="{{ case.title }} Case study details" href="{{ case.url }}">{{ case.title }}</a></h3>
+
+<div class="grid">
+  <div class="grid__col grid__col--1-of-5 grid__col--m-1-of-3  grid__col--s-1-of-1">
+    {% if case.thumb %}<img src="/{{ site.theme-path }}/case-studies/{{ case.thumb }}" alt="{{ case.title }}" class="listing-thumb"/>{% endif %}
+  </div>
+  <div class="grid__col grid__col--4-of-5 grid__col--m-2-of-3   grid__col--s-1-of-1">
+    <p>{{ case.summary }}</p>
+  </div>
+
+</div>
+{% endfor %}
+
+<a class="read-more" href="/case-studies/" title="Case studies">More case studies →</a>
+
+</div><!-- end wrapper -->
+</section>
+
+<section class="cf">
+<div class="wrapper">
+<h2>Twitter</h2>
+<div id="tweetWrap" class="tweetwrap"></div>
+<script type="text/javascript" src="/js/mytweets.js"></script>
+</div>
+</section>
