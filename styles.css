@@ -54,6 +54,28 @@ body {
   padding: 0 16px;
 }
 
+/* 两栏布局 */
+.layout { display: grid; grid-template-columns: 240px 1fr; gap: 16px; padding: 16px 0 40px; }
+.sidebar { position: sticky; top: 64px; align-self: start; }
+.sidebar-inner { border: 1px solid var(--border); background: var(--card); border-radius: 12px; padding: 12px; }
+.sidebar-title { margin: 4px 0 10px; font-size: 16px; }
+.category-list { display: grid; gap: 6px; }
+.category-item { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.category-btn { width: 100%; text-align: left; background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px; cursor: pointer; }
+.category-btn[aria-pressed="true"] { border-color: var(--brand); box-shadow: 0 0 0 2px color-mix(in srgb, var(--brand) 25%, transparent); }
+
+.main { min-width: 0; }
+.post-list { display: grid; gap: 10px; }
+.post-row { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 10px; }
+.post-row .title { font-size: 15px; margin: 0 0 6px; }
+.post-row .meta { color: var(--muted); font-size: 12px; margin-bottom: 6px; }
+.post-row .excerpt { font-size: 14px; color: var(--text); }
+.post-row a { text-decoration: none; color: var(--brand); }
+.post-row a:hover { text-decoration: underline; }
+
+.post-content { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 14px; margin-top: 12px; }
+.post-content h1 { margin-top: 0; }
+
 .site-header {
   position: sticky;
   top: 0;
@@ -162,6 +184,8 @@ pre {
 /* 小屏优化 */
 @media (max-width: 480px) {
   .posts { grid-template-columns: 1fr; }
+  .layout { grid-template-columns: 1fr; }
+  .sidebar { position: static; }
 }
 
 /* 基础样式与主题 */

@@ -26,21 +26,30 @@
     </header>
 
     <main class="container">
-      <section class="controls" aria-label="筛选与搜索">
-        <div class="search">
-          <input id="searchInput" type="search" placeholder="搜索标题、摘要或正文（按 / 快速聚焦）" aria-label="搜索" />
-        </div>
-        <div class="filters">
-          <span class="filters-label">标签：</span>
-          <div id="tagFilters" class="tag-list" role="list" aria-label="标签过滤"></div>
-        </div>
-        <div class="status-bar">
-          <span id="resultCount">加载中…</span>
-          <button id="clearFilters" class="btn ghost small" title="清除搜索与标签">清除</button>
-        </div>
-      </section>
+      <div class="layout">
+        <aside class="sidebar" aria-label="分类">
+          <div class="sidebar-inner">
+            <h2 class="sidebar-title">分类</h2>
+            <nav id="categoryList" class="category-list" role="list"></nav>
+          </div>
+        </aside>
 
-      <section id="posts" class="posts" aria-live="polite" aria-busy="true"></section>
+        <section class="main">
+          <section class="controls" aria-label="搜索">
+            <div class="search">
+              <input id="searchInput" type="search" placeholder="搜索标题、摘要或正文（按 / 快速聚焦）" aria-label="搜索" />
+            </div>
+            <div class="status-bar">
+              <span id="resultCount">加载中…</span>
+              <button id="clearFilters" class="btn ghost small" title="清除搜索与分类">清除</button>
+            </div>
+          </section>
+
+          <section id="postList" class="post-list" aria-live="polite" aria-busy="true"></section>
+
+          <article id="postContent" class="post-content" hidden></article>
+        </section>
+      </div>
     </main>
 
     <footer class="site-footer">

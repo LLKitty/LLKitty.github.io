@@ -1,7 +1,8 @@
 // DOM 引用
-const postsEl = document.getElementById('posts');
+const postsEl = document.getElementById('postList');
+const postContentEl = document.getElementById('postContent');
+const categoryListEl = document.getElementById('categoryList');
 const searchInput = document.getElementById('searchInput');
-const tagFiltersEl = document.getElementById('tagFilters');
 const resultCountEl = document.getElementById('resultCount');
 const clearBtn = document.getElementById('clearFilters');
 const backToTop = document.getElementById('backToTop');
@@ -11,6 +12,7 @@ const themeToggle = document.getElementById('themeToggle');
 let posts = [];
 let activeTags = new Set();
 let query = '';
+let activePostSlug = '';
 
 // 工具函数
 const htmlEscape = (s) => (s || '').replace(/[&<>]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
@@ -102,47 +104,76 @@ function matchPost(post) {
 
 function renderTags() {
   const all = Array.from(new Set(posts.flatMap((p) => p.tags))).sort();
-  tagFiltersEl.innerHTML = '';
+  categoryListEl.innerHTML = '';
   all.forEach((tag) => {
+    const item = document.createElement('div');
+    item.className = 'category-item';
     const btn = document.createElement('button');
-    btn.className = 'tag';
+    btn.className = 'category-btn';
     btn.type = 'button';
     btn.textContent = tag;
     btn.setAttribute('aria-pressed', activeTags.has(tag) ? 'true' : 'false');
     btn.addEventListener('click', () => {
-      if (activeTags.has(tag)) activeTags.delete(tag); else activeTags.add(tag);
-      btn.setAttribute('aria-pressed', activeTags.has(tag) ? 'true' : 'false');
+      // 单选；再次点击则清除
+      if (activeTags.has(tag)) activeTags.clear();
+      else activeTags = new Set([tag]);
+      renderTags();
       renderPosts();
     });
-    tagFiltersEl.appendChild(btn);
+    item.appendChild(btn);
+    categoryListEl.appendChild(item);
   });
 }
 
 function renderPosts() {
   const matched = posts.filter(matchPost).sort((a, b) => b.date.localeCompare(a.date));
-  postsEl.innerHTML = matched
-    .map(
-      (p) => `
-    <article class="post" tabindex="0">
+  postsEl.innerHTML = matched.map((p) => `
+    <div class="post-row">
       <div class="meta">${p.date} · ${p.tags.map((t) => `#${t}`).join(' ')}</div>
-      <h3>${p.title}</h3>
+      <h3 class="title"><a href="#${p.slug}" data-slug="${p.slug}">${p.title}</a></h3>
       <p class="excerpt">${p.excerpt}</p>
-      <details>
-        <summary>展开笔记</summary>
-        <div class="markdown">${p.contentHtml}</div>
-      </details>
-        </article>
-  `
-    )
-    .join('');
+    </div>
+  `).join('');
   resultCountEl.textContent = `共 ${matched.length} 篇`;
-  document.querySelector('#posts').setAttribute('aria-busy', 'false');
+  postsEl.setAttribute('aria-busy', 'false');
+
+  // 绑定点击打开全文
+  postsEl.querySelectorAll('a[data-slug]').forEach((a) => {
+    a.addEventListener('click', (e) => {
+      e.preventDefault();
+      const slug = a.getAttribute('data-slug');
+      openPost(slug);
+    });
+  });
 }
 
 function computeAndRender() {
   renderTags();
   renderPosts();
 }
+
+function openPost(slug) {
+  const post = posts.find((p) => p.slug === slug);
+  if (!post) return;
+  activePostSlug = slug;
+  postContentEl.innerHTML = `
+    <h1>${post.title}</h1>
+    <div class="meta">${post.date} · ${post.tags.map((t) => `#${t}`).join(' ')}</div>
+    <div class="markdown">${post.contentHtml}</div>
+  `;
+  postContentEl.hidden = false;
+  // 更新 hash，便于刷新/分享
+  if (location.hash !== `#${slug}`) {
+    history.replaceState(null, '', `#${slug}`);
+  }
+  postContentEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// 支持通过 URL hash 直接打开文章
+window.addEventListener('hashchange', () => {
+  const slug = (location.hash || '').replace(/^#/, '');
+  if (slug) openPost(slug);
+});
 
 // 搜索交互
 searchInput.addEventListener('input', (e) => {
