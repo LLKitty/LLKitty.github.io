@@ -67,12 +67,12 @@ function mdToText(md) {
 
 async function loadPosts() {
   try {
-    const res = await fetch('doc/manifest.json');
+    const res = await fetch('./doc/manifest.json', { cache: 'no-store' });
     if (!res.ok) throw new Error('manifest 加载失败');
     const manifest = await res.json();
     const mdList = await Promise.all(
       manifest.map(async (item) => {
-        const mdRes = await fetch(`doc/${item.file}`);
+        const mdRes = await fetch(`./doc/${item.file}`, { cache: 'no-store' });
         if (!mdRes.ok) throw new Error(`${item.file} 加载失败`);
         const md = await mdRes.text();
         return {
@@ -86,7 +86,7 @@ async function loadPosts() {
     posts = mdList;
     computeAndRender();
   } catch (err) {
-    postsEl.innerHTML = `<article class="post"><h3>无法加载文章</h3><p class="muted">${htmlEscape(String(err))}</p><p class="muted">如果是直接用浏览器打开本文件，建议通过本地静态服务器运行。例如：VSCode Live Server 或在本目录执行 <code>python -m http.server</code>。</p></article>`;
+    postsEl.innerHTML = `<article class=\"post\"><h3>无法加载文章</h3><p class=\"muted\">${htmlEscape(String(err))}</p><p class=\"muted\">如在 GitHub Pages 上，请确保仓库根目录存在 <code>.nojekyll</code> 文件以禁用 Jekyll，并确认 <code>doc/manifest.json</code> 与 <code>doc/*.md</code> 均已发布。</p></article>`;
     resultCountEl.textContent = '加载失败';
   }
 }
@@ -131,7 +131,7 @@ function renderPosts() {
         <summary>展开笔记</summary>
         <div class="markdown">${p.contentHtml}</div>
       </details>
-    </article>
+        </article>
   `
     )
     .join('');
@@ -147,11 +147,11 @@ function computeAndRender() {
 // 搜索交互
 searchInput.addEventListener('input', (e) => {
   query = e.target.value || '';
-  renderPosts();
-});
-window.addEventListener('keydown', (e) => {
+      renderPosts();
+    });
+    window.addEventListener('keydown', (e) => {
   if (e.key === '/') {
-    e.preventDefault();
+        e.preventDefault();
     searchInput.focus();
   }
 });
@@ -161,15 +161,15 @@ clearBtn.addEventListener('click', () => {
   query = '';
   activeTags.clear();
   searchInput.value = '';
-  renderTags();
-  renderPosts();
-});
+      renderTags();
+      renderPosts();
+    });
 
-// 回到顶部
+    // 回到顶部
 backToTop.addEventListener('click', (e) => {
-  e.preventDefault();
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-});
+      e.preventDefault();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
 
 // 主题切换（记忆至 localStorage）
 const THEME_KEY = 'prefers-dark';
