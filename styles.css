@@ -1,7 +1,7 @@
 /* 基本主题：浅绿色护眼，支持系统暗色偏好 */
 :root {
-  --bg: #e9f7ec; /* very light green */
-  --bg-soft: #dff3e4;
+  --bg: #f4faf6; /* lighter green */
+  --bg-soft: #edf7f1;
   --text: #1b2b1d;
   --muted: #4a6a4f;
   --brand: #2f8f4e;

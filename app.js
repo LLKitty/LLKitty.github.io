@@ -87,6 +87,11 @@ async function loadPosts() {
     );
     posts = mdList;
     computeAndRender();
+    // 初次载入：若有 hash，直接打开对应文章
+    const initialSlug = (location.hash || '').replace(/^#/, '');
+    if (initialSlug) {
+      openPost(initialSlug);
+    }
   } catch (err) {
     postsEl.innerHTML = `<article class=\"post\"><h3>无法加载文章</h3><p class=\"muted\">${htmlEscape(String(err))}</p><p class=\"muted\">如在 GitHub Pages 上，请确保仓库根目录存在 <code>.nojekyll</code> 文件以禁用 Jekyll，并确认 <code>doc/manifest.json</code> 与 <code>doc/*.md</code> 均已发布。</p></article>`;
     resultCountEl.textContent = '加载失败';
@@ -178,11 +183,11 @@ window.addEventListener('hashchange', () => {
 // 搜索交互
 searchInput.addEventListener('input', (e) => {
   query = e.target.value || '';
-      renderPosts();
-    });
-    window.addEventListener('keydown', (e) => {
+  renderPosts();
+});
+window.addEventListener('keydown', (e) => {
   if (e.key === '/') {
-        e.preventDefault();
+    e.preventDefault();
     searchInput.focus();
   }
 });
@@ -192,15 +197,15 @@ clearBtn.addEventListener('click', () => {
   query = '';
   activeTags.clear();
   searchInput.value = '';
-      renderTags();
-      renderPosts();
-    });
+  renderTags();
+  renderPosts();
+});
 
     // 回到顶部
 backToTop.addEventListener('click', (e) => {
-      e.preventDefault();
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    });
+  e.preventDefault();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+});
 
 // 主题切换（记忆至 localStorage）
 const THEME_KEY = 'prefers-dark';
