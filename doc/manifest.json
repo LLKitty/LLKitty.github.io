@@ -1,0 +1,27 @@
+[
+  {
+    "slug": "stm32-clock-tree",
+    "title": "STM32 时钟树入门与常见坑",
+    "file": "stm32-clock-tree.md",
+    "date": "2024-05-20",
+    "tags": ["STM32", "时钟", "基础"],
+    "excerpt": "从 HSE/HSI 到 PLL，梳理 STM32 时钟树配置与调参思路，并总结常见报错与不稳定原因。"
+  },
+  {
+    "slug": "freertos-stack-heap",
+    "title": "FreeRTOS 任务栈与堆大小选择",
+    "file": "freertos-stack-heap.md",
+    "date": "2024-06-02",
+    "tags": ["RTOS", "FreeRTOS", "内存"],
+    "excerpt": "估算任务栈大小、heap_4/5 的适用场景，以及堆碎片的排查技巧。"
+  },
+  {
+    "slug": "i2c-debug-nack",
+    "title": "I2C 调试：常见波形与 NACK 排查",
+    "file": "i2c-debug-nack.md",
+    "date": "2024-06-10",
+    "tags": ["I2C", "调试", "外设"],
+    "excerpt": "典型 I2C 波形对照，NACK 的常见原因与修复步骤。"
+  }
+]
+
