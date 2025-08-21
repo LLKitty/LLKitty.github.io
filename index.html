@@ -1,10 +1,147 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-CN">
 <head>
-    <title>demo</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>嵌入式开发技术博客</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
 </head>
 <body>
-    <h1>欢迎</h1>
-    <p>这是一个简单的示例。</p>
+    <div class="container">
+        <!-- 左侧分类导航 -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h1>嵌入式开发</h1>
+                <p>技术分享与学习笔记</p>
+            </div>
+            
+            <nav class="category-nav">
+                <div class="category-group">
+                    <h3>硬件设计</h3>
+                    <ul>
+                        <li><a href="#" data-category="pcb">PCB设计</a></li>
+                        <li><a href="#" data-category="schematic">原理图设计</a></li>
+                        <li><a href="#" data-category="layout">布局布线</a></li>
+                    </ul>
+                </div>
+                
+                <div class="category-group">
+                    <h3>单片机开发</h3>
+                    <ul>
+                        <li><a href="#" data-category="stm32">STM32</a></li>
+                        <li><a href="#" data-category="arduino">Arduino</a></li>
+                        <li><a href="#" data-category="esp32">ESP32</a></li>
+                        <li><a href="#" data-category="pic">PIC单片机</a></li>
+                    </ul>
+                </div>
+                
+                <div class="category-group">
+                    <h3>嵌入式系统</h3>
+                    <ul>
+                        <li><a href="#" data-category="rtos">RTOS</a></li>
+                        <li><a href="#" data-category="linux">嵌入式Linux</a></li>
+                        <li><a href="#" data-category="freertos">FreeRTOS</a></li>
+                    </ul>
+                </div>
+                
+                <div class="category-group">
+                    <h3>通信协议</h3>
+                    <ul>
+                        <li><a href="#" data-category="uart">UART/串口</a></li>
+                        <li><a href="#" data-category="i2c">I2C</a></li>
+                        <li><a href="#" data-category="spi">SPI</a></li>
+                        <li><a href="#" data-category="can">CAN总线</a></li>
+                    </ul>
+                </div>
+                
+                <div class="category-group">
+                    <h3>传感器应用</h3>
+                    <ul>
+                        <li><a href="#" data-category="temperature">温度传感器</a></li>
+                        <li><a href="#" data-category="pressure">压力传感器</a></li>
+                        <li><a href="#" data-category="motion">运动传感器</a></li>
+                    </ul>
+                </div>
+                
+                <div class="category-group">
+                    <h3>开发工具</h3>
+                    <ul>
+                        <li><a href="#" data-category="ide">开发环境</a></li>
+                        <li><a href="#" data-category="debug">调试工具</a></li>
+                        <li><a href="#" data-category="simulation">仿真工具</a></li>
+                    </ul>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- 右侧文章内容区域 -->
+        <main class="main-content">
+            <header class="content-header">
+                <h2 id="current-category">欢迎来到嵌入式开发技术博客</h2>
+                <p id="category-description">在这里分享嵌入式开发的技术心得、项目经验和学习笔记</p>
+            </header>
+            
+            <div class="article-container" id="article-container">
+                <!-- 默认欢迎内容 -->
+                <div class="welcome-content">
+                    <h3>🚀 开始你的嵌入式开发之旅</h3>
+                    <p>这个博客涵盖了嵌入式开发的各个方面，从硬件设计到软件编程，从基础概念到高级应用。</p>
+                    
+                    <div class="feature-grid">
+                        <div class="feature-card">
+                            <h4>📚 技术文章</h4>
+                            <p>深入浅出的技术讲解，结合实际项目经验</p>
+                        </div>
+                        <div class="feature-card">
+                            <h4>🔧 实用工具</h4>
+                            <p>推荐各种开发工具和调试方法</p>
+                        </div>
+                        <div class="feature-card">
+                            <h4>💡 项目案例</h4>
+                            <p>完整的项目实现过程和代码分析</p>
+                        </div>
+                        <div class="feature-card">
+                            <h4>📖 学习资源</h4>
+                            <p>精选的学习资料和参考文档</p>
+                        </div>
+                    </div>
+                    
+                    <div class="quick-start">
+                        <h4>快速开始</h4>
+                        <ul>
+                            <li>选择左侧分类浏览相关文章</li>
+                            <li>查看技术教程和项目案例</li>
+                            <li>学习嵌入式开发的最佳实践</li>
+                            <li>参与技术讨论和经验分享</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- 文章模板 -->
+    <template id="article-template">
+        <article class="article">
+            <header class="article-header">
+                <h1 class="article-title"></h1>
+                <div class="article-meta">
+                    <span class="article-date"></span>
+                    <span class="article-category"></span>
+                </div>
+            </header>
+            <div class="article-content"></div>
+        </article>
+    </template>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/4.3.0/marked.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-markup.min.js"></script>
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-c.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-cpp.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
