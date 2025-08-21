@@ -1,0 +1,19 @@
+{
+	"version": "1.0.0",
+	"categories": {
+		"pcb": [
+			{ "title": "PCB设计基础：从原理图到制板", "date": "2024-01-15", "category": "PCB设计", "file": "pcb-basic.md" },
+			{ "title": "高速PCB设计中的阻抗控制", "date": "2024-01-10", "category": "PCB设计", "file": "pcb-impedance.md" }
+		],
+		"stm32": [
+			{ "title": "STM32入门指南：从零开始学习", "date": "2024-01-20", "category": "STM32", "file": "stm32-getting-started.md" },
+			{ "title": "STM32定时器应用详解", "date": "2024-01-18", "category": "STM32", "file": "stm32-timer.md" }
+		],
+		"arduino": [
+			{ "title": "Arduino物联网项目实战", "date": "2024-01-12", "category": "Arduino", "file": "arduino-iot.md" }
+		],
+		"uart": [
+			{ "title": "UART通信协议详解", "date": "2024-01-08", "category": "UART/串口", "file": "uart-overview.md" }
+		]
+	}
+}
