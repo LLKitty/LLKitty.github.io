@@ -22,7 +22,7 @@ const categoryDescriptions = {
 	motion: "运动传感器和姿态检测",
 	ide: "嵌入式开发环境配置",
 	debug: "调试工具和技巧",
-	simulation: "电路仿真和验证工具"
+	simulation: "仿真验证工具"
 };
 
 // 页面加载完成后初始化
@@ -32,17 +32,141 @@ document.addEventListener('DOMContentLoaded', async function() {
 	showWelcomeContent();
 });
 
-// 加载文章清单
+// 加载文章清单（GitHub Pages 上优先自动模式；否则优先 manifest）
 async function loadManifest() {
+	const repoInfo = detectRepoFromLocation();
+	if (repoInfo) {
+		// GitHub Pages：优先尝试自动模式
+		const auto = await tryBuildManifestAutomatically().catch(() => null);
+		if (auto) {
+			articlesManifest = auto;
+			return;
+		}
+		console.warn('自动清单失败，回退到 manifest.json');
+	}
+	// 尝试读取 manifest.json
 	try {
 		const res = await fetch('doc/manifest.json');
 		if (!res.ok) throw new Error('manifest load failed');
 		const data = await res.json();
 		if (!data || !data.categories) throw new Error('invalid manifest');
 		articlesManifest = data;
+		return;
 	} catch (e) {
-		console.error('加载文章清单失败:', e);
+		console.warn('manifest.json 不可用:', e);
 	}
+	// 非 GitHub 或 manifest 失败：最后再尝试自动模式
+	const auto = await tryBuildManifestAutomatically().catch(() => null);
+	if (auto) {
+		articlesManifest = auto;
+	} else {
+		console.error('无法加载文章清单。');
+	}
+}
+
+// 自动构建清单（GitHub Pages 环境下，使用 GitHub API 扫描 doc 目录）
+async function tryBuildManifestAutomatically() {
+	const repoInfo = detectRepoFromLocation();
+	if (!repoInfo) return null;
+	const branch = await detectBranch(repoInfo).catch(() => null) || 'main';
+	const tree = await fetchRepoTreeRecursive(repoInfo, branch);
+	const files = tree.filter(node => node.type === 'blob' && node.path.startsWith('doc/') && node.path.toLowerCase().endsWith('.md'));
+	const categories = {};
+	for (const f of files) {
+		const rel = f.path.substring('doc/'.length);
+		const meta = parseMetaFromPath(rel);
+		if (!categories[meta.category]) categories[meta.category] = [];
+		const date = await fetchFileLastCommitDate(repoInfo, rel).catch(() => '');
+		categories[meta.category].push({
+			title: meta.title,
+			date: date,
+			category: meta.categoryDisplay,
+			file: rel
+		});
+	}
+	Object.keys(categories).forEach(k => {
+		categories[k].sort((a, b) => String(b.date).localeCompare(String(a.date)));
+	});
+	return { version: String(Date.now()), categories };
+}
+
+// 从 host/path 推断仓库信息（仅支持 GitHub Pages）
+function detectRepoFromLocation() {
+	const host = (window.location && window.location.hostname) || '';
+	const path = (window.location && window.location.pathname) || '/';
+	if (!host.endsWith('github.io')) return null;
+	const owner = host.split('.')[0];
+	let repo = `${owner}.github.io`;
+	const parts = path.split('/').filter(Boolean);
+	if (parts.length >= 1) {
+		const candidate = parts[0];
+		if (candidate && candidate.toLowerCase() !== `${owner}.github.io`) {
+			repo = candidate;
+		}
+	}
+	return { owner, repo };
+}
+
+async function detectBranch(repo) {
+	try {
+		const r = await fetch(`https://api.github.com/repos/${repo.owner}/${repo.repo}`);
+		if (r.ok) {
+			const j = await r.json();
+			if (j && j.default_branch) return j.default_branch;
+		}
+	} catch {}
+	for (const b of ['main', 'master', 'gh-pages']) {
+		try {
+			const r = await fetch(`https://api.github.com/repos/${repo.owner}/${repo.repo}/branches/${b}`);
+			if (r.ok) return b;
+		} catch {}
+	}
+	return 'main';
+}
+
+async function fetchRepoTreeRecursive(repo, branch) {
+	const br = await fetch(`https://api.github.com/repos/${repo.owner}/${repo.repo}/branches/${branch}`);
+	if (!br.ok) throw new Error('cannot read branch');
+	const brj = await br.json();
+	const sha = brj && brj.commit && brj.commit.sha;
+	if (!sha) throw new Error('missing commit sha');
+	const treeRes = await fetch(`https://api.github.com/repos/${repo.owner}/${repo.repo}/git/trees/${sha}?recursive=1`);
+	if (!treeRes.ok) throw new Error('cannot read tree');
+	const tj = await treeRes.json();
+	return (tj && tj.tree) || [];
+}
+
+// 从相对 doc/ 的路径中解析分类与标题
+function parseMetaFromPath(relPath) {
+	const parts = relPath.split('/');
+	const base = parts[parts.length - 1];
+	const name = base.replace(/\.md$/i, '');
+	let category = 'uncategorized';
+	let title = name;
+	if (name.includes('-')) {
+		const idx = name.indexOf('-');
+		const prefix = name.slice(0, idx).toLowerCase();
+		const rest = name.slice(idx + 1);
+		category = prefix || (parts.length > 1 ? parts[0].toLowerCase() : 'uncategorized');
+		title = rest || name;
+	} else if (parts.length > 1) {
+		category = parts[0].toLowerCase();
+		title = name;
+	}
+	title = decodeURIComponent(title).replace(/[\-_]+/g, ' ').trim();
+	if (title) title = title.charAt(0).toUpperCase() + title.slice(1);
+	const categoryDisplay = category.toUpperCase();
+	return { category, title, categoryDisplay };
+}
+
+async function fetchFileLastCommitDate(repo, relPathUnderDoc) {
+	const url = `https://api.github.com/repos/${repo.owner}/${repo.repo}/commits?path=${encodeURIComponent('doc/' + relPathUnderDoc)}&per_page=1`;
+	const r = await fetch(url);
+	if (!r.ok) return '';
+	const j = await r.json();
+	const commit = Array.isArray(j) && j[0] && j[0].commit;
+	const date = commit && (commit.author && commit.author.date);
+	return date ? date.slice(0, 10) : '';
 }
 
 // 初始化导航
@@ -119,7 +243,6 @@ function displayArticles(category, articleList) {
 	});
 	html += '</div>';
 	articleContainer.innerHTML = html;
-	// 异步填充摘要
 	fillPreviews(category, articleList);
 }
 
